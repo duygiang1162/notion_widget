@@ -5,16 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Interface</title>
     <style>
-        .correct {
-            color: green;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-        .incorrect {
-            color: red;
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+            text-align: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 20px;
         }
         .btn {
-            margin-top: 10px;
-            padding: 10px 20px;
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+        }
+        .btn.correct {
+            background-color: #28a745;
+        }
+        .btn.incorrect {
+            background-color: #dc3545;
         }
         .question-container {
             display: none;
@@ -28,28 +57,27 @@
         .question-nav button {
             margin: 2px;
         }
+        .feedback {
+            margin-top: 10px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
-    <div id="question1" class="question-container active">
-        <p>We would like two cups of _.</p>
-        <button onclick="checkAnswer(1, 'tea')">tea</button>
-        <button onclick="checkAnswer(1, 'teas')">teas</button>
-        <div id="feedback1"></div>
+    <div id="question1" class="container question-container active">
+        <p class="question">We would like two cups of _.</p>
+        <button class="btn" onclick="checkAnswer(1, 'tea')">tea</button>
+        <button class="btn" onclick="checkAnswer(1, 'teas')">teas</button>
+        <div id="feedback1" class="feedback"></div>
     </div>
-    
-    <div id="question2" class="question-container">
-        <p>I don't think I have _ time to do my homework.</p>
-        <button onclick="checkAnswer(2, '-')">-</button>
-        <button onclick="checkAnswer(2, 'a')">a</button>
-        <div id="feedback2"></div>
+
+    <div id="question2" class="container question-container">
+        <p class="question">I don't think I have _ time to do my homework.</p>
+        <button class="btn" onclick="checkAnswer(2, '-')">-</button>
+        <button class="btn" onclick="checkAnswer(2, 'a')">a</button>
+        <div id="feedback2" class="feedback"></div>
     </div>
-    
-    <div class="question-nav">
-        <button onclick="previousQuestion()">Câu trước</button>
-        <button onclick="nextQuestion()">Câu sau</button>
-    </div>
-    
+
     <script>
         let currentQuestion = 1;
         const totalQuestions = 2;
@@ -62,11 +90,11 @@
             const feedback = document.getElementById('feedback' + questionNumber);
             if (selectedAnswer === correctAnswers[questionNumber]) {
                 feedback.textContent = 'Correct!';
-                feedback.className = 'correct';
+                feedback.className = 'feedback correct';
                 setTimeout(nextQuestion, 1000);
             } else {
                 feedback.textContent = 'Incorrect! Explanation: The correct answer is "' + correctAnswers[questionNumber] + '".';
-                feedback.className = 'incorrect';
+                feedback.className = 'feedback incorrect';
             }
         }
 
