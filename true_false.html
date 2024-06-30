@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 500px; /* Set fixed width */
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative; /* Để có thể sử dụng vị trí tuyệt đối */
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            background-color: white;
+            color: #007bff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .btn.correct {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        .btn.incorrect {
+            background-color: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+        .question-container {
+            display: none;
+        }
+        .question-container.active {
+            display: block;
+        }
+        .question-nav {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            position: relative;
+            flex-wrap: wrap; /* Để các nút câu hỏi xuống dòng khi không đủ không gian */
+        }
+        .question-nav button {
+            margin: 5px;
+            border-radius: 5px;
+            background-color: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+            cursor: pointer;
+            padding: 8px 12px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .question-nav button.active-question {
+            background-color: #28a745;
+            color: white;
+        }
+        .auto-next {
+            position: absolute;
+            bottom: -5px; /* Điều chỉnh khoảng cách của checkbox so với các câu hỏi */
+            left: 50%; /* Để đặt checkbox cân xứng với nội dung câu hỏi */
+            transform: translateX(-50%); /* Đưa checkbox về giữa theo chiều ngang */
+        }
+        .auto-next label {
+            display: block;
+            background-color: #f0f8ff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 2px solid #007bff;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .auto-next label:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .auto-next input[type="checkbox"] {
+            margin-right: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="quiz-container">
+        <!-- Questions will be inserted here by JavaScript -->
+    </div>
+
+    <div class="question-nav">
+        <!-- Buttons to directly navigate to questions -->
+    </div>
+
+    <div class="auto-next">
+        <label>
+            <input type="checkbox" id="autoNext"> Tự động chuyển câu
+        </label>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                text: 'We would like two cups of _.',
+                answers: ['tea', 'teas'],
+                correct: 'tea'
+            },
+            {
+                text: "I don't think I have _ time to do my homework.",
+                answers: ['-', 'a'],
+                correct: '-'
+            },
+            {
+                text: '_ passes quickly when you are with your friends.',
+                answers: ['A time', 'Time'],
+                correct: 'Time'
+            },
+            {
+                text: "What do you do for _?",
+                answers: ['A work', 'work'],
+                correct: 'work'
+            },
+            {
+                text: "Do you have _ umbrella?",
+                answers: ['_', 'an'],
+                correct: 'an'
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        function loadQuestions() {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+
+            questions.forEach((question, index) => {
+                const questionContainer = document.createElement('div');
+                questionContainer.id = 'question' + index;
+                questionContainer.className = 'container question-container';
+                if (index === 0) {
+                    questionContainer.classList.add('active');
+                }
+
+                const questionText = document.createElement('p');
+                questionText.className = 'question';
+                questionText.textContent = question.text;
+                questionContainer.appendChild(questionText);
+
+                question.answers.forEach(answer => {
+                    const answerButton = document.createElement('button');
+                    answerButton.className = 'btn';
+                    answerButton.textContent = answer;
+                    answerButton.onclick = () => checkAnswer(index, answer, answerButton);
+                    questionContainer.appendChild(answerButton);
+                });
+
+                const feedback = document.createElement('div');
+                feedback.id = 'feedback' + index;
+                feedback.className = 'feedback';
+                questionContainer.appendChild(feedback);
+
+                quizContainer.appendChild(questionContainer);
+            });
+
+            createQuestionNavigation();
+        }
+
+        function checkAnswer(questionIndex, selectedAnswer, button) {
+            const feedback = document.getElementById('feedback' + questionIndex);
+            const buttons = document.querySelectorAll('#question' + questionIndex + ' .btn');
+
+            if (selectedAnswer === questions[questionIndex].correct) {
+                button.classList.add('correct');
+                feedback.textContent = 'Correct';
+                if (document.getElementById('autoNext').checked) {
+                    setTimeout(nextQuestion, 1000);
+                }
+            } else {
+                button.classList.add('incorrect');
+                feedback.textContent = 'Incorrect';
+            }
+
+            setTimeout(() => {
+                button.classList.remove('correct', 'incorrect');
+            }, 1000);
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                document.getElementById('question' + currentQuestion).classList.remove('active');
+                currentQuestion++;
+                document.getElementById('question' + currentQuestion).classList.add('active');
+                updateCurrentQuestionHighlight();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                document.getElementById('question' + currentQuestion).classList.remove('active');
+                currentQuestion--;
+                document.getElementById('question' + currentQuestion).classList.add('active');
+                updateCurrentQuestionHighlight();
+            }
+        }
+
+        function createQuestionNavigation() {
+            const navContainer = document.querySelector('.question-nav');
+
+            questions.forEach((_, index) => {
+                const navButton = document.createElement('button');
+                navButton.textContent = index + 1;
+                navButton.onclick = () => goToQuestion(index);
+                if (index === 0) {
+                    navButton.classList.add('active-question');
+                }
+                navContainer.appendChild(navButton);
+            });
+        }
+
+        function updateCurrentQuestionHighlight() {
+            const navButtons = document.querySelectorAll('.question-nav button');
+            navButtons.forEach((button, index) => {
+                if (index === currentQuestion) {
+                    button.classList.add('active-question');
+                } else {
+                    button.classList.remove('active-question');
+                }
+            });
+        }
+
+        function goToQuestion(index) {
+            if (index >= 0 && index < questions.length) {
+                document.getElementById('question' + currentQuestion).classList.remove('active');
+                currentQuestion = index;
+                document.getElementById('question' + currentQuestion).classList.add('active');
+                updateCurrentQuestionHighlight();
+            }
+        }
+
+        loadQuestions();
+    </script>
+</body>
+</html>
