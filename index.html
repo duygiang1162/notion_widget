@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interface</title>
+    <style>
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+        .btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .question-container {
+            display: none;
+        }
+        .question-container.active {
+            display: block;
+        }
+        .question-nav {
+            margin-top: 20px;
+        }
+        .question-nav button {
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div id="question1" class="question-container active">
+        <p>We would like two cups of _.</p>
+        <button onclick="checkAnswer(1, 'tea')">tea</button>
+        <button onclick="checkAnswer(1, 'teas')">teas</button>
+        <div id="feedback1"></div>
+    </div>
+    
+    <div id="question2" class="question-container">
+        <p>I don't think I have _ time to do my homework.</p>
+        <button onclick="checkAnswer(2, '-')">-</button>
+        <button onclick="checkAnswer(2, 'a')">a</button>
+        <div id="feedback2"></div>
+    </div>
+    
+    <div class="question-nav">
+        <button onclick="previousQuestion()">Câu trước</button>
+        <button onclick="nextQuestion()">Câu sau</button>
+    </div>
+    
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 2;
+        const correctAnswers = {
+            1: 'tea',
+            2: '-'
+        };
+
+        function checkAnswer(questionNumber, selectedAnswer) {
+            const feedback = document.getElementById('feedback' + questionNumber);
+            if (selectedAnswer === correctAnswers[questionNumber]) {
+                feedback.textContent = 'Correct!';
+                feedback.className = 'correct';
+                setTimeout(nextQuestion, 1000);
+            } else {
+                feedback.textContent = 'Incorrect! Explanation: The correct answer is "' + correctAnswers[questionNumber] + '".';
+                feedback.className = 'incorrect';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                document.getElementById('question' + currentQuestion).classList.remove('active');
+                currentQuestion++;
+                document.getElementById('question' + currentQuestion).classList.add('active');
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 1) {
+                document.getElementById('question' + currentQuestion).classList.remove('active');
+                currentQuestion--;
+                document.getElementById('question' + currentQuestion).classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
