@@ -78,14 +78,12 @@
             transition: background-color 0.3s, color 0.3s;
         }
         .question-nav button.active-question {
-            background-color: #28a745;
+            background-color: #dc3545;
             color: white;
         }
         .auto-next {
-            position: absolute;
-            bottom: -5px; /* Điều chỉnh khoảng cách của checkbox so với các câu hỏi */
-            left: 50%; /* Để đặt checkbox cân xứng với nội dung câu hỏi */
-            transform: translateX(-50%); /* Đưa checkbox về giữa theo chiều ngang */
+            position: relative;
+            margin-top: 20px; /* Điều chỉnh khoảng cách của checkbox so với các câu hỏi */
         }
         .auto-next label {
             display: block;
@@ -111,14 +109,14 @@
         <!-- Questions will be inserted here by JavaScript -->
     </div>
 
-    <div class="question-nav">
-        <!-- Buttons to directly navigate to questions -->
-    </div>
-
     <div class="auto-next">
         <label>
             <input type="checkbox" id="autoNext"> Tự động chuyển câu
         </label>
+    </div>
+
+    <div class="question-nav">
+        <!-- Buttons to directly navigate to questions -->
     </div>
 
     <script>
